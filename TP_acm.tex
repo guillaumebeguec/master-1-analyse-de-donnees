@@ -1,0 +1,99 @@
+\documentclass[11pt]{article}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage{enumitem}
+\usepackage{microtype}
+\setlength{\emergencystretch}{3em}
+
+\title{\textbf{\LARGE TP~2}\\[0.4ex]\large Analyse de données - Master~1\\Analyse en Composantes Principales (ACP)}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Packages et données}
+Ce TP s'appuie principalement sur le package \texttt{FactoMineR} pour l'ACP. Assurez-vous que les packages nécessaires sont installés et chargés.
+
+\emph{Indication R :} \texttt{library(FactoMineR)}
+
+% ===========================
+\section*{Partie 1 — Lancement d'une ACP avec FactoMineR}
+\begin{enumerate}[leftmargin=1.2cm]
+  \item \textbf{Chargement des données :} Chargez le jeu de données \texttt{decathlon} et affichez ses premières lignes.
+  
+  \emph{Indication R :} \texttt{data(decathlon); head(decathlon)}
+  
+  \item \textbf{Exécution de l'ACP :} Réalisez une ACP sur les 10 premières colonnes (performances) et stockez le résultat dans l'objet \texttt{res.pca}.
+  
+  \emph{Indication R :} \texttt{res.pca <- PCA(decathlon[,1:10], graph = FALSE)}
+
+  \item \textbf{Valeurs propres :} Affichez le tableau des valeurs propres de votre ACP.
+  
+  \emph{Indication R :} \texttt{print(res.pca\$eig)}
+\end{enumerate}
+
+% ===========================
+% ===========================
+\section*{Partie 2 — Interprétation d'une ACP sur les données \texttt{decathlon}}
+On continue avec l'objet \texttt{res.pca} de la partie 1.
+
+\begin{enumerate}[leftmargin=1.2cm, start=4]
+  \item \textbf{Cercle des corrélations :} Visualisez le cercle des corrélations pour les axes 1 et 2. Pour cela, on utilise la fonction \texttt{plot} appliquée à notre objet ACP, en spécifiant le graphique des variables.
+  
+  \emph{Indication R :} \texttt{plot(res.pca, choix = "var")}
+  
+  \item \textbf{Analyse de l'axe 1 :} D'après le graphique, quelles variables sont fortement corrélées (positivement ou négativement) à l'axe 1 ?
+  
+  \item \textbf{Analyse de l'axe 2 :} Identifiez maintenant les variables qui sont le plus fortement corrélées à l'axe 2.
+  
+  \item \textbf{Interprétation des axes :} Proposez une interprétation simple pour l'axe 1 et l'axe 2. 
+  
+  \item \textbf{Graphe des individus :} Affichez le graphique des athlètes sur les deux premiers axes en utilisant la même fonction \texttt{plot}, mais en spécifiant le graphique des individus.
+  
+  \emph{Indication R :} \texttt{plot(res.pca, choix = "ind")}
+  
+  \item \textbf{Analyse des individus :} Quels sont les athlètes qui se distinguent le plus sur l'axe 1 ? Et sur l'axe 2 ? Que pouvez-vous en déduire sur leurs performances ?
+
+\end{enumerate}
+
+% ===========================
+\section*{Partie 3 — Cas pratique : ACP sur des données financières}
+L'objectif est d'analyser la structure des rendements d'un portefeuille d'actions du CAC40 pour identifier les facteurs de risque communs.
+
+\begin{enumerate}[leftmargin=1.2cm, start=12]
+
+  \item \textbf{Téléchargement des données :} Chargez le package \texttt{quantmod} et téléchargez les données de 10 actions du CAC40 pour 2022-2023.
+  
+  \emph{Indication R :} \texttt{library(quantmod); tickers <- c("GLE.PA", ..., "MC.PA"); getSymbols(tickers, from="2022-01-01", to="2023-12-31")}
+  
+
+  \item \textbf{Préparation et calcul des rendements :} En utilisant les prix ajustés, créez un unique dataframe \texttt{returns\_df} contenant les rendements journaliers de toutes les actions.
+  
+  \emph{Indications R :} Utilisez \texttt{Ad()} pour extraire les prix, \texttt{do.call(merge, lapply(...))} ou une boucle for pour les assembler. Pensez à transformer les prix en log.
+
+  \item \textbf{Lancement de l'ACP :} Réalisez une ACP centrée-réduite sur votre tableau de rendements.
+  
+  \emph{Indication R :} \texttt{res.pca.fin <- PCA(returns\_df, scale.unit = TRUE, graph = FALSE)}
+  
+  \item \textbf{Analyse de la variance expliquée :} Visualisez l'éboulis des valeurs propres. Quel pourcentage de variance est expliqué par la CP1 ? Est-ce suffisant pour une analyse sur 2 axes ?
+  
+  \emph{Indications R :} L'information se trouve dans \texttt{res.pca.fin\$eig}. Pensez à \texttt{barplot()}.
+  
+  \item \textbf{Interprétation de l'axe 1 (Le Facteur Marché) :} Affichez le cercle des corrélations. Analysez la structure de l'axe 1 et donnez son interprétation financière.
+  
+  \emph{Indications R :} \texttt{plot(..., choix = "var")}
+  
+  \item \textbf{Interprétation de l'axe 2 (Les Oppositions Sectorielles) :} Analysez l'axe 2. Identifie-t-il des oppositions entre groupes d'actions ? Quel est l'intérêt pour un investisseur ?
+  
+  \item \textbf{Bonus : Visualisation du Facteur Marché :} Tracez l'évolution temporelle de la première composante principale.
+  
+  \emph{Indications R :} Les coordonnées sont dans \texttt{res.pca.fin\$ind\$coord}. Utilisez \texttt{plot(..., type = 'l')}.
+
+\end{enumerate}
+
+\end{document}
